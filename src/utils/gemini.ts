@@ -7,7 +7,7 @@ const genAI = new GoogleGenerativeAI("AIzaSyCeeQH5t2hAOkr6kZBPklGaaTcLnNeg_Rw");
 export const getGeminiResponse = async (prompt: string): Promise<string> => {
   try {
     // Use gemini-1.0-pro model instead of gemini-pro
-    const model = genAI.getGenerativeModel({ model: "gemini-1.0-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     
     const result = await model.generateContent(`You are a helpful AI assistant for VIT Pune college. 
     You should only answer questions related to VIT Pune college. 
