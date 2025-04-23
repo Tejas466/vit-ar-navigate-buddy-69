@@ -12,16 +12,15 @@ import FeedbackPopup from './FeedbackPopup';
 import { toast } from '@/hooks/use-toast';
 
 const locations = [
-  "Main Entrance",
-  "Administrative Block",
-  "Computer Engineering Dept.",
-  "Mechanical Engineering Dept.",
-  "Electronics Dept.",
-  "Civil Engineering Dept.",
-  "Library",
-  "Cafeteria",
-  "Auditorium",
-  "Sports Complex",
+  "1301",
+  "1302",
+  "1303",
+  "1307",
+  "1308",
+  "1309",
+  "Conference Hall",
+  "1314",
+  "1316",
 ];
 
 const ARNavigation = () => {
