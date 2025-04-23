@@ -6,7 +6,7 @@ export const useVolumeButtons = () => {
   const [rotation, setRotation] = useState(0);
 
   useEffect(() => {
-    const handleVolumeButton = async (event: any) => {
+    const handleVolumeButton = async (event: { volumeButton: string }) => {
       if (event.volumeButton === 'up') {
         setRotation(prev => (prev + 90) % 360);
       } else if (event.volumeButton === 'down') {
