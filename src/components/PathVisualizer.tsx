@@ -15,7 +15,7 @@ const mockDoors = [
 ];
 
 const PathVisualizer = ({ from, to, progress }: PathVisualizerProps) => {
-  const [arrowPosition] = useState({ x: 50, y: 50 });
+  const [arrowPosition] = useState({ x: 50, y: 85 }); // Moved lower to appear on the floor
   const [nearbyDoor, setNearbyDoor] = useState<any>(null);
   const [showDoorInfo, setShowDoorInfo] = useState(false);
   
@@ -43,16 +43,16 @@ const PathVisualizer = ({ from, to, progress }: PathVisualizerProps) => {
         style={{ 
           left: `${arrowPosition.x}%`, 
           top: `${arrowPosition.y}%`,
-          transform: 'translate(-50%, -50%)'
+          transform: 'translate(-50%, -50%) perspective(1000px) rotateX(45deg)'
         }}
       >
         <div className="glass rounded-xl p-4 shadow-lg">
           <img 
-            src="/lovable-uploads/65d1f0bb-897a-487a-8801-66811208f41d.png"
+            src="/lovable-uploads/ee3b8639-047e-495d-8d63-75ade2c09c54.png"
             alt="Navigation Arrow"
-            width="48"
-            height="48"
-            className="animate-pulse"
+            width="64"
+            height="64"
+            className="animate-[pulse_1.5s_ease-in-out_infinite]"
           />
         </div>
       </div>
