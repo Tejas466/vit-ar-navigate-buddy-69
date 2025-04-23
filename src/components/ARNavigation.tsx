@@ -1,11 +1,15 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowRight } from 'lucide-react';
 import CameraView from './CameraView';
 import PathVisualizer from './PathVisualizer';
+import { useIsMobile } from '@/hooks/use-mobile';
+import ARInstructions from './ARInstructions';
+import FeedbackPopup from './FeedbackPopup';
+import { toast } from '@/hooks/use-toast';
 
 const locations = [
   "Main Entrance",
@@ -25,23 +29,74 @@ const ARNavigation = () => {
   const [destination, setDestination] = useState("");
   const [showCamera, setShowCamera] = useState(false);
   const [navigationStarted, setNavigationStarted] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [navigationProgress, setNavigationProgress] = useState(0);
+  const [reachedDestination, setReachedDestination] = useState(false);
+  const isMobile = useIsMobile();
+  
+  useEffect(() => {
+    if (navigationStarted) {
+      // Simulate navigation progress
+      const interval = setInterval(() => {
+        setNavigationProgress((prev) => {
+          const newProgress = prev + 10;
+          if (newProgress >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              setReachedDestination(true);
+              setShowFeedback(true);
+            }, 1000);
+            return 100;
+          }
+          return newProgress;
+        });
+      }, 2000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [navigationStarted]);
   
   const handleStartNavigation = () => {
     if (startLocation && destination) {
       setShowCamera(true);
       setNavigationStarted(true);
+      setNavigationProgress(0);
+      setReachedDestination(false);
+      setShowInstructions(true);
+      
+      toast({
+        title: "Navigation Started",
+        description: `Navigating from ${startLocation} to ${destination}`,
+      });
+      
+      // Hide instructions after 5 seconds
+      setTimeout(() => {
+        setShowInstructions(false);
+      }, 5000);
     }
   };
   
   const handleStopNavigation = () => {
     setShowCamera(false);
     setNavigationStarted(false);
+    setNavigationProgress(0);
+    setReachedDestination(false);
+    setShowFeedback(false);
+  };
+  
+  const handleFeedbackSubmit = (rating, comment) => {
+    toast({
+      title: "Thank You!",
+      description: "Your feedback helps improve our navigation system.",
+    });
+    setShowFeedback(false);
   };
   
   return (
     <div className="w-full flex flex-col items-center">
-      <Card className="w-full max-w-md bg-card shadow-lg">
-        <CardContent className="p-6">
+      <Card className={`w-full ${isMobile ? 'max-w-full' : 'max-w-md'} bg-card shadow-lg`}>
+        <CardContent className="p-4 sm:p-6">
           <h2 className="text-2xl font-bold mb-4 text-center">VIT Campus Navigation</h2>
           
           {!showCamera ? (
@@ -94,7 +149,31 @@ const ARNavigation = () => {
             <div className="space-y-4">
               <div className="relative">
                 <CameraView />
-                <PathVisualizer from={startLocation} to={destination} />
+                
+                {navigationStarted && !reachedDestination && (
+                  <PathVisualizer 
+                    from={startLocation} 
+                    to={destination} 
+                    progress={navigationProgress}
+                  />
+                )}
+                
+                {showInstructions && <ARInstructions />}
+                
+                {/* Progress indicator */}
+                <div className="absolute bottom-20 left-0 right-0 flex justify-center">
+                  <div className="glass px-4 py-2 rounded-full">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 bg-muted rounded-full w-32 overflow-hidden">
+                        <div 
+                          className="h-full bg-vit-teal" 
+                          style={{ width: `${navigationProgress}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-xs font-medium">{navigationProgress}%</span>
+                    </div>
+                  </div>
+                </div>
               </div>
               
               <div className="bg-muted p-3 rounded-md">
@@ -102,9 +181,15 @@ const ARNavigation = () => {
                   Navigating from <span className="font-bold">{startLocation}</span> to{" "}
                   <span className="font-bold">{destination}</span>
                 </p>
-                <p className="text-xs text-muted-foreground">
-                  Follow the arrows on your screen
-                </p>
+                {reachedDestination ? (
+                  <p className="text-xs text-green-600 font-medium">
+                    You have reached your destination!
+                  </p>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    Follow the arrows on your screen
+                  </p>
+                )}
               </div>
               
               <Button 
@@ -118,6 +203,10 @@ const ARNavigation = () => {
           )}
         </CardContent>
       </Card>
+      
+      {showFeedback && (
+        <FeedbackPopup onSubmit={handleFeedbackSubmit} onClose={() => setShowFeedback(false)} />
+      )}
     </div>
   );
 };
