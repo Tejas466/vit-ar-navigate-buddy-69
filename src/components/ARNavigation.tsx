@@ -159,20 +159,7 @@ const ARNavigation = () => {
                 
                 {showInstructions && <ARInstructions />}
                 
-                {/* Progress indicator */}
-                <div className="absolute bottom-20 left-0 right-0 flex justify-center">
-                  <div className="glass px-4 py-2 rounded-full">
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 bg-muted rounded-full w-32 overflow-hidden">
-                        <div 
-                          className="h-full bg-vit-teal" 
-                          style={{ width: `${navigationProgress}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-xs font-medium">{navigationProgress}%</span>
-                    </div>
-                  </div>
-                </div>
+                {/* Progress indicator removed as requested */}
               </div>
               
               <div className="bg-muted p-3 rounded-md">

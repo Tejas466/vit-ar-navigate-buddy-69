@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { ArrowBigRight } from 'lucide-react';
 
 interface PathVisualizerProps {
   from: string;
@@ -48,10 +47,12 @@ const PathVisualizer = ({ from, to, progress }: PathVisualizerProps) => {
         }}
       >
         <div className="glass rounded-xl p-4 shadow-lg">
-          <ArrowBigRight 
-            size={48} 
-            className="text-vit-teal animate-pulse"
-            strokeWidth={3}
+          <img 
+            src="/lovable-uploads/65d1f0bb-897a-487a-8801-66811208f41d.png"
+            alt="Navigation Arrow"
+            width="48"
+            height="48"
+            className="animate-pulse"
           />
         </div>
       </div>

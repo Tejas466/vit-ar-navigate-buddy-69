@@ -14,9 +14,8 @@ const NavigationPage = () => {
       
       <div className={`container px-4 py-6 ${isMobile ? 'pb-16' : 'py-8'} flex-1`}>
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="mb-2">
             <h1 className="text-3xl font-bold">AR Navigation</h1>
-            <Badge className="bg-vit-teal">Beta</Badge>
           </div>
           <p className="text-muted-foreground mb-6">
             Navigate VIT Pune campus with augmented reality guidance
