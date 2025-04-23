@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
+import { useVolumeButtons } from '../hooks/useVolumeButtons';
 
 interface PathVisualizerProps {
   from: string;
@@ -15,9 +15,10 @@ const mockDoors = [
 ];
 
 const PathVisualizer = ({ from, to, progress }: PathVisualizerProps) => {
-  const [arrowPosition] = useState({ x: 50, y: 85 }); // Moved lower to appear on the floor
+  const [arrowPosition] = useState({ x: 50, y: 85 });
   const [nearbyDoor, setNearbyDoor] = useState<any>(null);
   const [showDoorInfo, setShowDoorInfo] = useState(false);
+  const arrowRotation = useVolumeButtons();
   
   // Check for nearby doors
   useEffect(() => {
@@ -43,12 +44,12 @@ const PathVisualizer = ({ from, to, progress }: PathVisualizerProps) => {
         style={{ 
           left: `${arrowPosition.x}%`, 
           top: `${arrowPosition.y}%`,
-          transform: 'translate(-50%, -50%) perspective(1000px) rotateX(45deg)'
+          transform: `translate(-50%, -50%) perspective(1000px) rotateX(45deg) rotate(${arrowRotation}deg)`
         }}
       >
         <div className="glass rounded-xl p-4 shadow-lg">
           <img 
-            src="/lovable-uploads/ee3b8639-047e-495d-8d63-75ade2c09c54.png"
+            src="/lovable-uploads/e6bf3e1a-cff2-4c26-85d1-edb8abd4fda1.png"
             alt="Navigation Arrow"
             width="64"
             height="64"
