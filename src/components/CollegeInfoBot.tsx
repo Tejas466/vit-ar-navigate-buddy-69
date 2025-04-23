@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send } from 'lucide-react';
 import { getGeminiResponse } from '@/utils/gemini';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   id: number;
@@ -19,12 +20,13 @@ const CollegeInfoBot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: "Hello! I'm VITBot, your AI assistant for VIT Pune. How can I help you today?",
+      text: "Hello! I'm VITBot, your AI assistant for VIT Pune. How can I help you today? You can ask me about departments, admission procedures, facilities, faculty, or any other information about VIT Pune.",
       sender: 'bot',
       timestamp: new Date()
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
   
   const messageEndRef = useRef<HTMLDivElement>(null);
   
@@ -43,26 +45,49 @@ const CollegeInfoBot = () => {
     setInput('');
     setIsLoading(true);
     
+    // Add a temporary thinking message
+    const thinkingId = messages.length + 2;
+    setMessages(prev => [...prev, {
+      id: thinkingId,
+      text: "Thinking...",
+      sender: 'bot',
+      timestamp: new Date()
+    }]);
+    
     try {
       const response = await getGeminiResponse(input);
       
-      const botResponse: Message = {
-        id: messages.length + 2,
-        text: response,
-        sender: 'bot',
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, botResponse]);
+      // Replace thinking message with actual response
+      setMessages(prev => prev.map(msg => 
+        msg.id === thinkingId 
+          ? {
+              id: thinkingId,
+              text: response,
+              sender: 'bot',
+              timestamp: new Date()
+            }
+          : msg
+      ));
     } catch (error) {
       console.error('Error:', error);
-      const errorMessage: Message = {
-        id: messages.length + 2,
-        text: "I apologize, but I'm having trouble processing your request at the moment. Please try again later.",
-        sender: 'bot',
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, errorMessage]);
+      
+      // Replace thinking message with error message
+      setMessages(prev => prev.map(msg => 
+        msg.id === thinkingId 
+          ? {
+              id: thinkingId,
+              text: "I apologize, but I'm having trouble processing your request at the moment. Please try again later.",
+              sender: 'bot',
+              timestamp: new Date()
+            }
+          : msg
+      ));
+      
+      toast({
+        title: "Connection Error",
+        description: "Could not connect to the VIT knowledge base.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -105,7 +130,7 @@ const CollegeInfoBot = () => {
                       : 'bg-muted'
                   }`}
                 >
-                  <p>{message.text}</p>
+                  <p className="whitespace-pre-wrap">{message.text}</p>
                   <p className="text-xs opacity-70 mt-1">
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>

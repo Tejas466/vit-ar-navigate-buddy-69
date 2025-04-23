@@ -6,19 +6,37 @@ const genAI = new GoogleGenerativeAI("AIzaSyCeeQH5t2hAOkr6kZBPklGaaTcLnNeg_Rw");
 
 export const getGeminiResponse = async (prompt: string): Promise<string> => {
   try {
-    // Use gemini-1.0-pro model instead of gemini-pro
+    // Using gemini-1.5-flash which is the latest available model
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     
-    const result = await model.generateContent(`You are a helpful AI assistant for VIT Pune college. 
-    You should only answer questions related to VIT Pune college. 
-    If the question is not related to VIT Pune, politely decline to answer.
+    const result = await model.generateContent({
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `You are an AI assistant for VIT Pune college.
+              You should provide helpful, accurate, and detailed information about VIT Pune.
+              If asked about something not related to VIT Pune, politely explain you can only answer questions about VIT Pune.
+              
+              Question: ${prompt}`
+            }
+          ]
+        }
+      ],
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 1024,
+      }
+    });
     
-    Question: ${prompt}`);
+    if (!result.response || !result.response.text()) {
+      return "I apologize, but I couldn't find information about that. Please try asking something else about VIT Pune.";
+    }
     
-    const response = result.response;
-    return response.text();
+    return result.response.text();
   } catch (error) {
     console.error('Error getting Gemini response:', error);
-    return "I apologize, but I'm having trouble processing your request at the moment. Please try again later.";
+    return "I apologize, but I'm having trouble connecting to my knowledge base right now. Please try again in a moment.";
   }
 };
